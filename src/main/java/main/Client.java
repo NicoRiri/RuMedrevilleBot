@@ -19,10 +19,7 @@ public class Client {
 
     private Client() throws LoginException {
         jda = JDABuilder.createDefault(
-                //Prod
-//                        "MTA2ODU1NTM1MjY2NjI5NjQ2Mw.GagxzX.dzr2_9N7uBOdCjjO_5_gRTEBTtTkXRfEAjAsyU",
-                //Dev
-                        "NDQ1OTg5MjEwMjY1MDkyMDk5.G8qxu6.OUMGqKyQ3QnqQfDbpH1EZlnvgvmYvtnzKJw1UY",
+                        "MTA2ODU1NTM1MjY2NjI5NjQ2Mw.GagxzX.dzr2_9N7uBOdCjjO_5_gRTEBTtTkXRfEAjAsyU",
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_VOICE_STATES,
