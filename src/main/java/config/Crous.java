@@ -1,55 +1,48 @@
 package config;
 
-import me.maxouxax.multi4j.MultiClient;
-import me.maxouxax.multi4j.MultiConfig;
-import me.maxouxax.multi4j.exceptions.MultiLoginException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 public class Crous {
 
-    public static MessageEmbed getMenu() throws MultiLoginException, IOException, URISyntaxException, InterruptedException {
+    public static MessageEmbed getMenu() throws IOException {
+        String url = "https://multi.univ-lorraine.fr/graphql";
+        String graphQLQuery = "{\"operationName\":\"crous\",\"variables\":{},\"query\":\"query crous {\\n  restos {\\n    title\\n    thumbnail_url\\n    image_url\\n    short_desc\\n    lat\\n    lon\\n    menus {\\n      date\\n      meal {\\n        name\\n        foodcategory {\\n          name\\n          dishes {\\n            name\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
 
+        try (OutputStream outputStream = connection.getOutputStream()) {
+            outputStream.write(graphQLQuery.getBytes("UTF-8"));
+            outputStream.flush();
+        }
 
-        // First step is to create the config instance:
-// You can either create a config with hard coded credentials
-        MultiConfig config = new MultiConfig();
-        config.setUsername("bernar424u");
-        config.setPassword("Nicolas200305*");
+        StringBuilder rp = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                rp.append(line);
+            }
+        }
 
-// Then you can create a client using the builder
-        MultiClient multiClient = new MultiClient.Builder().withMultiConfig(config).build();
-
-        multiClient.connect();
-        // You can either make a GQL Request manually by
-
-// creating the GQL JSON object
-        JSONObject jsonObject = new JSONObject("{\"operationName\":\"crous\",\"variables\":{},\"query\":\"query crous {\\n  restos {\\n    title\\n    thumbnail_url\\n    image_url\\n    short_desc\\n    lat\\n    lon\\n    menus {\\n      date\\n      meal {\\n        name\\n        foodcategory {\\n          name\\n          dishes {\\n            name\\n            __typename\\n          }\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}");
-
-// and getting a JSONObject as a response
-        JSONObject response = multiClient.makeGQLRequest(jsonObject);
-
-//        System.out.println(response.toString());
-
+        JSONObject response = new JSONObject(rp.toString());
         JSONArray fienarray = response.getJSONObject("data").getJSONArray("restos");
 
-
-        //Titre
-//        for (int i = 0; i < fienarray.length(); i++) {
-//            JSONObject fi = response.getJSONObject("data").getJSONArray("restos").getJSONObject(i);
-//            System.out.println(fi.get("title"));
-//            System.out.println(fi.get("thumbnail_url"));
-//        }
         String crous = "Resto U' Médreville";
-
         EmbedBuilder ailfinal = new EmbedBuilder();
         ailfinal.addField("Localisation", crous, false);
 
@@ -71,15 +64,18 @@ public class Crous {
         JSONObject fi = response.getJSONObject("data").getJSONArray("restos").getJSONObject(finaly);
         System.out.println(fi.get("title"));
         System.out.println(fi.get("thumbnail_url"));
+        ailfinal.setFooter("Resto U' Médreville");
         ailfinal.setThumbnail(fi.get("thumbnail_url").toString());
         JSONArray fiaki = fi.getJSONArray("menus");
-//        JSONObject fia = fi.getJSONArray("menus").getJSONObject(0);
+
         //Trouver date
         int finali = 0;
         System.out.println(fiaki.length());
+        boolean menuUpload = false;
         for (int i = 0; i < fiaki.length(); i++) {
             System.out.println(fiaki.getJSONObject(i).getString("date"));
             if (fiaki.getJSONObject(i).getString("date").equals(date)) {
+                menuUpload = true;
                 ailfinal.addField("Date", fiaki.getJSONObject(i).getString("date"), false);
                 System.out.println("trouve");
                 finali = i;
@@ -87,6 +83,18 @@ public class Crous {
                 break;
             }
         }
+
+        if (!menuUpload){
+            System.out.println("Sortie d'action");
+            EmbedBuilder sortieAction = new EmbedBuilder();
+            sortieAction.setTitle("Résultat non trouvé");
+            sortieAction.setColor(Color.RED);
+            sortieAction.setDescription("Le menu n'a pas encore été mis en ligne");
+            sortieAction.setFooter("Resto U' Médreville");
+            return sortieAction.build();
+        }
+
+
         JSONObject fia = fi.getJSONArray("menus").getJSONObject(finali);
 
         //Deja date
@@ -96,15 +104,22 @@ public class Crous {
         String sli = "";
         for (int i = 0; i < fiakrarray.length(); i++) {
             String temp = fiakrarray.getJSONObject(i).getString("name");
-            System.out.println(temp);
-            sli += temp+" - ";
+            temp = temp.replaceAll(" - ", "");
+            if (!temp.equals("")){
+                System.out.println(temp);
+                sli += temp+"\n\n";
+            }
+
         }
         String strNew = sli.substring(0, sli.length()-2);
         ailfinal.addField("Repas", strNew, false);
         ailfinal.setColor(Color.red);
 
+        connection.disconnect();
         return ailfinal.build();
 
 
     }
 }
+
+

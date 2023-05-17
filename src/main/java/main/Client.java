@@ -19,7 +19,10 @@ public class Client {
 
     private Client() throws LoginException {
         jda = JDABuilder.createDefault(
-                        "MTA2ODU1NTM1MjY2NjI5NjQ2Mw.GagxzX.dzr2_9N7uBOdCjjO_5_gRTEBTtTkXRfEAjAsyU",
+                //Prod
+//                        "MTA2ODU1NTM1MjY2NjI5NjQ2Mw.GagxzX.dzr2_9N7uBOdCjjO_5_gRTEBTtTkXRfEAjAsyU",
+                //Dev
+                        "NDQ1OTg5MjEwMjY1MDkyMDk5.G8qxu6.OUMGqKyQ3QnqQfDbpH1EZlnvgvmYvtnzKJw1UY",
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_MESSAGES,
                         GatewayIntent.GUILD_VOICE_STATES,
@@ -40,19 +43,9 @@ public class Client {
                 .build();
 
         jda.updateCommands().addCommands(
-
                 Commands.slash("menu", "Indique le menu du Resto U' de Médreville d'aujourd'hui")
-
-
         ).queue();
-
-
-
     }
-
-
-
-
 
     public static void main(String[] args) throws LoginException {
         new Client();
