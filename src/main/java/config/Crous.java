@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.text.Normalizer;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -17,6 +18,13 @@ import java.util.Date;
 
 
 public class Crous {
+
+    public static String lowerAccent(String str) {
+        String norma = Normalizer.normalize(str, Normalizer.Form.NFD);
+        norma = norma.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        System.out.println(norma.toLowerCase());
+        return norma.toLowerCase();
+    }
 
     public static MessageEmbed getMenu() throws IOException {
         String url = "https://multi.univ-lorraine.fr/graphql";
@@ -55,37 +63,37 @@ public class Crous {
         JSONArray fim = response.getJSONObject("data").getJSONArray("restos");
         for (int i = 0; i < fim.length(); i++) {
             if (fim.getJSONObject(i).getString("title").equals(crous)) {
-                System.out.println(fim.getJSONObject(i).getString("title"));
+//                System.out.println(fim.getJSONObject(i).getString("title"));
                 finaly = i;
                 break;
             }
         }
 
         JSONObject fi = response.getJSONObject("data").getJSONArray("restos").getJSONObject(finaly);
-        System.out.println(fi.get("title"));
-        System.out.println(fi.get("thumbnail_url"));
+//        System.out.println(fi.get("title"));
+//        System.out.println(fi.get("thumbnail_url"));
         ailfinal.setFooter("Resto U' Médreville");
         ailfinal.setThumbnail(fi.get("thumbnail_url").toString());
         JSONArray fiaki = fi.getJSONArray("menus");
 
         //Trouver date
         int finali = 0;
-        System.out.println(fiaki.length());
+//        System.out.println(fiaki.length());
         boolean menuUpload = false;
         for (int i = 0; i < fiaki.length(); i++) {
-            System.out.println(fiaki.getJSONObject(i).getString("date"));
+//            System.out.println(fiaki.getJSONObject(i).getString("date"));
             if (fiaki.getJSONObject(i).getString("date").equals(date)) {
                 menuUpload = true;
                 ailfinal.addField("Date", fiaki.getJSONObject(i).getString("date"), false);
-                System.out.println("trouve");
+//                System.out.println("trouve");
                 finali = i;
-                System.out.println(finali);
+//                System.out.println(finali);
                 break;
             }
         }
 
-        if (!menuUpload){
-            System.out.println("Sortie d'action");
+        if (!menuUpload) {
+//            System.out.println("Sortie d'action");
             EmbedBuilder sortieAction = new EmbedBuilder();
             sortieAction.setTitle("Résultat non trouvé");
             sortieAction.setColor(Color.RED);
@@ -100,19 +108,79 @@ public class Crous {
         //Deja date
         JSONObject fiak = fia.getJSONArray("meal").getJSONObject(0);
         JSONObject fiakr = fiak.getJSONArray("foodcategory").getJSONObject(0);
-        JSONArray fiakrarray = fiakr.getJSONArray("dishes");
+        JSONArray foodArray = fiakr.getJSONArray("dishes");
         String sli = "";
-        for (int i = 0; i < fiakrarray.length(); i++) {
-            String temp = fiakrarray.getJSONObject(i).getString("name");
-            temp = temp.replaceAll(" - ", "");
-            if (!temp.equals("")){
-                System.out.println(temp);
-                sli += temp+"\n\n";
-            }
 
+        boolean entree = false;
+        boolean plats = false;
+        boolean vg = false;
+        boolean accompagnement = false;
+        boolean dessert = false;
+
+        for (int i = 0; i < foodArray.length(); i++) {
+            String current = foodArray.getJSONObject(i).getString("name");
+            current = current.replaceAll(" - ", "");
+
+            //Module
+            if (lowerAccent(current).contains("entree") && !entree) {
+                String entstr = current;
+
+                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("plats")) {
+                    i++;
+                    String plusun = foodArray.getJSONObject(i).getString("name");
+                    entstr += "\n" + plusun;
+                }
+                ailfinal.addField("Entrées", entstr, false);
+                entree = true;
+
+
+            } else if (lowerAccent(current).contains("plats") && !plats) {
+                String str = current;
+
+                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("vg")) {
+                    i++;
+                    String plusun = foodArray.getJSONObject(i).getString("name");
+                    str += "\n" + plusun;
+                }
+                ailfinal.addField("Plats", str, false);
+                plats = true;
+
+
+            } else if (lowerAccent(current).contains("vg") && !vg) {
+                String str = current;
+
+                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("accompagnement")) {
+                    i++;
+                    String plusun = foodArray.getJSONObject(i).getString("name");
+                    str += "\n" + plusun;
+                }
+                ailfinal.addField("VG", str, false);
+                vg = true;
+
+
+            } else if (lowerAccent(current).contains("accompagnement") && !accompagnement) {
+                String str = current;
+
+                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("dessert")) {
+                    i++;
+                    String plusun = foodArray.getJSONObject(i).getString("name");
+                    str += "\n" + plusun;
+                }
+                ailfinal.addField("Accompagnements", str, false);
+                plats = true;
+
+            } else if (lowerAccent(current).contains("dessert") && !dessert) {
+                String str = current;
+
+                while (i < foodArray.length()-1) {
+                    i++;
+                    String plusun = foodArray.getJSONObject(i).getString("name");
+                    str += "\n" + plusun;
+                }
+                ailfinal.addField("Plats", str, false);
+                dessert = true;
+            }
         }
-        String strNew = sli.substring(0, sli.length()-2);
-        ailfinal.addField("Repas", strNew, false);
         ailfinal.setColor(Color.red);
 
         connection.disconnect();
