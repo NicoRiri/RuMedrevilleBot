@@ -25,7 +25,7 @@ public class Listener extends ListenerAdapter {
                 LocalTime currentTime = LocalTime.now();
                 if (currentTime.getHour() == 11 && currentTime.getMinute() == 50) {
                     try {
-                        EnvoyerMessageAutomatique(event.getJDA().getTextChannelById("1134625479412961502"));
+                        EnvoyerMessageAutomatique(event.getJDA().getTextChannelById("1156713583179214968"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
