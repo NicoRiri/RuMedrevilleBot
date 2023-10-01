@@ -5,7 +5,7 @@
 
 ## Lancement
 
-``java -jar Crous_Medreville_v3.0.jar``
+``java -jar Crous_Medreville_v{version}.jar``
 
 ## Fonctionnalités
 - Donne le menu du midi du Resto'U de Médreville avec la commande ``/menu``

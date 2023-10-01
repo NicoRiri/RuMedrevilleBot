@@ -109,7 +109,8 @@ public class Crous {
         JSONObject fiak = fia.getJSONArray("meal").getJSONObject(0);
         JSONObject fiakr = fiak.getJSONArray("foodcategory").getJSONObject(0);
         JSONArray foodArray = fiakr.getJSONArray("dishes");
-        String sli = "";
+        ailfinal.setColor(Color.red);
+        EmbedBuilder ailfinaldeux = ailfinal;
 
         boolean entree = false;
         boolean plats = false;
@@ -167,7 +168,7 @@ public class Crous {
                     str += "\n" + plusun;
                 }
                 ailfinal.addField("Accompagnements", str, false);
-                plats = true;
+                accompagnement = true;
 
             } else if (lowerAccent(current).contains("dessert") && !dessert) {
                 String str = current;
@@ -181,10 +182,29 @@ public class Crous {
                 dessert = true;
             }
         }
-        ailfinal.setColor(Color.red);
 
         connection.disconnect();
-        return ailfinal.build();
+
+        if (entree && plats && vg && accompagnement && dessert){
+            return ailfinal.build();
+        } else {
+            String sli = "";
+            for (int i = 0; i < foodArray.length(); i++) {
+                String temp = foodArray.getJSONObject(i).getString("name");
+                temp = temp.replaceAll(" - ", "");
+                if (!temp.equals("")){
+                    System.out.println(temp);
+                    sli += temp+"\n\n";
+                }
+            }
+            String strNew = sli.substring(0, sli.length()-2);
+            ailfinaldeux.addField("Repas", strNew, false);
+            return ailfinaldeux.build();
+        }
+
+
+
+        
 
 
     }
