@@ -23,7 +23,7 @@ public class Listener extends ListenerAdapter {
         scheduler.scheduleAtFixedRate(() -> {
             if (EstJourOuvrable()) {
                 LocalTime currentTime = LocalTime.now();
-                if (currentTime.getHour() == 11 && currentTime.getMinute() == 50) {
+                if (currentTime.getHour() == 11 && currentTime.getMinute() == 30) {
                     try {
                         EnvoyerMessageAutomatique(event.getJDA().getTextChannelById("1156713583179214968"));
                     } catch (IOException e) {
