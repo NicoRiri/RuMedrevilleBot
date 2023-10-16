@@ -18,12 +18,12 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onReady(ReadyEvent event) {
-        System.out.println((char) 27 + "[32m" + "Le bot est ready" + (char) 27 + "[37m");
+        System.out.println("CrousMédreville lancé");
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             if (EstJourOuvrable()) {
                 LocalTime currentTime = LocalTime.now();
-                if (currentTime.getHour() == 11 && currentTime.getMinute() == 50) {
+                if (currentTime.getHour() == 11 && currentTime.getMinute() == 30) {
                     try {
                         EnvoyerMessageAutomatique(event.getJDA().getTextChannelById("1156713583179214968"));
                     } catch (IOException e) {

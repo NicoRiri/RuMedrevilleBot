@@ -52,7 +52,9 @@ public class Crous {
 
         String crous = "Resto U' Médreville";
         EmbedBuilder ailfinal = new EmbedBuilder();
+        EmbedBuilder ailfinalerror = new EmbedBuilder();
         ailfinal.addField("Localisation", crous, false);
+        ailfinalerror.addField("Localisation", crous, false);
 
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
         Date datel = new Date();
@@ -73,7 +75,9 @@ public class Crous {
 //        System.out.println(fi.get("title"));
 //        System.out.println(fi.get("thumbnail_url"));
         ailfinal.setFooter("Resto U' Médreville");
+        ailfinalerror.setFooter("Resto U' Médreville");
         ailfinal.setThumbnail(fi.get("thumbnail_url").toString());
+        ailfinalerror.setThumbnail(fi.get("thumbnail_url").toString());
         JSONArray fiaki = fi.getJSONArray("menus");
 
         //Trouver date
@@ -85,6 +89,7 @@ public class Crous {
             if (fiaki.getJSONObject(i).getString("date").equals(date)) {
                 menuUpload = true;
                 ailfinal.addField("Date", fiaki.getJSONObject(i).getString("date"), false);
+                ailfinalerror.addField("Date", fiaki.getJSONObject(i).getString("date"), false);
 //                System.out.println("trouve");
                 finali = i;
 //                System.out.println(finali);
@@ -110,7 +115,8 @@ public class Crous {
         JSONObject fiakr = fiak.getJSONArray("foodcategory").getJSONObject(0);
         JSONArray foodArray = fiakr.getJSONArray("dishes");
         ailfinal.setColor(Color.red);
-        EmbedBuilder ailfinaldeux = ailfinal;
+        ailfinalerror.setColor(Color.red);
+
 
         boolean entree = false;
         boolean plats = false;
@@ -118,76 +124,92 @@ public class Crous {
         boolean accompagnement = false;
         boolean dessert = false;
 
-        for (int i = 0; i < foodArray.length(); i++) {
-            String current = foodArray.getJSONObject(i).getString("name");
-            current = current.replaceAll(" - ", "");
+        try {
+            for (int i = 0; i < foodArray.length(); i++) {
+                String current = foodArray.getJSONObject(i).getString("name");
+                current = current.replaceAll(" - ", "");
 
-            //Module
-            if (lowerAccent(current).contains("entree") && !entree) {
-                String entstr = current;
+                //Module
+                if (lowerAccent(current).contains("entree") && !entree) {
+                    String entstr = current;
 
-                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("plats")) {
-                    i++;
-                    String plusun = foodArray.getJSONObject(i).getString("name");
-                    entstr += "\n" + plusun;
+                    while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("plats")) {
+                        i++;
+                        String plusun = foodArray.getJSONObject(i).getString("name");
+                        entstr += "\n" + plusun;
+                    }
+                    ailfinal.addField("Entrées", entstr, false);
+                    entree = true;
+
+
+                } else if (lowerAccent(current).contains("plats") && !plats) {
+                    String str = current;
+
+                    while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("vg")) {
+                        i++;
+                        String plusun = foodArray.getJSONObject(i).getString("name");
+                        str += "\n" + plusun;
+                    }
+                    ailfinal.addField("Plats", str, false);
+                    plats = true;
+
+
+                } else if (lowerAccent(current).contains("vg") && !vg) {
+                    String str = current;
+
+                    while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("garniture")) {
+                        i++;
+                        String plusun = foodArray.getJSONObject(i).getString("name");
+                        str += "\n" + plusun;
+                    }
+                    ailfinal.addField("VG", str, false);
+                    vg = true;
+
+
+                } else if (lowerAccent(current).contains("garniture") && !accompagnement) {
+                    String str = current;
+
+                    while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("dessert")) {
+                        i++;
+                        String plusun = foodArray.getJSONObject(i).getString("name");
+                        str += "\n" + plusun;
+                    }
+                    ailfinal.addField("Accompagnements", str, false);
+                    accompagnement = true;
+
+                } else if (lowerAccent(current).contains("dessert") && !dessert) {
+                    String str = current;
+
+                    while (i < foodArray.length()-1) {
+                        i++;
+                        String plusun = foodArray.getJSONObject(i).getString("name");
+                        str += "\n" + plusun;
+                    }
+                    ailfinal.addField("Plats", str, false);
+                    dessert = true;
                 }
-                ailfinal.addField("Entrées", entstr, false);
-                entree = true;
-
-
-            } else if (lowerAccent(current).contains("plats") && !plats) {
-                String str = current;
-
-                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("vg")) {
-                    i++;
-                    String plusun = foodArray.getJSONObject(i).getString("name");
-                    str += "\n" + plusun;
-                }
-                ailfinal.addField("Plats", str, false);
-                plats = true;
-
-
-            } else if (lowerAccent(current).contains("vg") && !vg) {
-                String str = current;
-
-                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("accompagnement")) {
-                    i++;
-                    String plusun = foodArray.getJSONObject(i).getString("name");
-                    str += "\n" + plusun;
-                }
-                ailfinal.addField("VG", str, false);
-                vg = true;
-
-
-            } else if (lowerAccent(current).contains("accompagnement") && !accompagnement) {
-                String str = current;
-
-                while (!lowerAccent(foodArray.getJSONObject(i + 1).getString("name")).contains("dessert")) {
-                    i++;
-                    String plusun = foodArray.getJSONObject(i).getString("name");
-                    str += "\n" + plusun;
-                }
-                ailfinal.addField("Accompagnements", str, false);
-                accompagnement = true;
-
-            } else if (lowerAccent(current).contains("dessert") && !dessert) {
-                String str = current;
-
-                while (i < foodArray.length()-1) {
-                    i++;
-                    String plusun = foodArray.getJSONObject(i).getString("name");
-                    str += "\n" + plusun;
-                }
-                ailfinal.addField("Plats", str, false);
-                dessert = true;
             }
-        }
 
-        connection.disconnect();
+            connection.disconnect();
 
-        if (entree && plats && vg && accompagnement && dessert){
-            return ailfinal.build();
-        } else {
+            if (entree && plats && vg && accompagnement && dessert){
+                return ailfinal.build();
+            } else {
+                String sli = "";
+                for (int i = 0; i < foodArray.length(); i++) {
+                    String temp = foodArray.getJSONObject(i).getString("name");
+                    temp = temp.replaceAll(" - ", "");
+                    if (!temp.equals("")){
+                        System.out.println(temp);
+                        sli += temp+"\n\n";
+                    }
+                }
+                String strNew = sli.substring(0, sli.length()-2);
+                ailfinalerror.addField("Repas", strNew, false);
+                return ailfinalerror.build();
+            }
+
+        } catch (Exception e){
             String sli = "";
             for (int i = 0; i < foodArray.length(); i++) {
                 String temp = foodArray.getJSONObject(i).getString("name");
@@ -198,15 +220,9 @@ public class Crous {
                 }
             }
             String strNew = sli.substring(0, sli.length()-2);
-            ailfinaldeux.addField("Repas", strNew, false);
-            return ailfinaldeux.build();
+            ailfinalerror.addField("Repas", strNew, false);
+            return ailfinalerror.build();
         }
-
-
-
-        
-
-
     }
 }
 
