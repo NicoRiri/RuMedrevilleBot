@@ -185,7 +185,7 @@ public class Crous {
                         String plusun = foodArray.getJSONObject(i).getString("name");
                         str += "\n" + plusun;
                     }
-                    ailfinal.addField("Plats", str, false);
+                    ailfinal.addField("Desserts", str, false);
                     dessert = true;
                 }
             }
@@ -223,6 +223,12 @@ public class Crous {
             ailfinalerror.addField("Repas", strNew, false);
             return ailfinalerror.build();
         }
+
+
+
+
+
+
     }
 }
 
