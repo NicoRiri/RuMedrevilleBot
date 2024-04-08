@@ -24,9 +24,6 @@ public class Listener extends ListenerAdapter {
         String channelId = System.getenv("channelId");
         String dailyTime = System.getenv("dailyTime");
 
-        System.out.println(channelId);
-        System.out.println(dailyTime);
-
         if (dailyTime != null){
             Pattern patternDailyTime = Pattern.compile("(\\b\\d{1,2}:\\d{2}\\b)");
             Matcher matcherDailyTime = patternDailyTime.matcher(dailyTime);
@@ -44,9 +41,6 @@ public class Listener extends ListenerAdapter {
             hour = -1;
         }
 
-        System.out.println(minute);
-        System.out.println(hour);
-        System.out.println((!Objects.equals(channelId, "") && channelId != null && hour != -1 && minute != -1));
         if (!Objects.equals(channelId, "") && channelId != null && hour != -1 && minute != -1){
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.scheduleAtFixedRate(() -> {
