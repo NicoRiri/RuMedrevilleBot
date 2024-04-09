@@ -76,8 +76,7 @@ public class Crous {
         int findTodayMenuVariable = 0;
         boolean isTodayMenu = false;
         for (int i = 0; i < menu.length(); i++) {
-//            if (menu.getJSONObject(i).getString("date").equals(date)) {
-            if (menu.getJSONObject(i).getString("date").equals("2024-04-09")) {
+            if (menu.getJSONObject(i).getString("date").equals(date)) {
                 isTodayMenu = true;
                 findTodayMenuVariable = i;
 
