@@ -41,7 +41,7 @@ ENV dailyTime="11:25"
 
 Avec docker, construire l'image
 ````shell
-docker build -t RuMedrevilleBot .
+docker build -t rumedrevillebot .
 ````
 
 Une fois construite, lancer un container avec l'image
