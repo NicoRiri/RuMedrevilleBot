@@ -46,5 +46,5 @@ docker build -t rumedrevillebot .
 
 Une fois construite, lancer un container avec l'image
 ````shell
-docker run RuMedrevilleBot
+docker run rumedrevillebot
 ````
