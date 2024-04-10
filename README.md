@@ -3,9 +3,16 @@
 ## 👨‍🎓 Auteur
 - Nicolas Bernardet
 
+## 📋 Preview
+
+<img src="https://github.com/NicoRiri/RuMedrevilleBot/blob/main/assets/preview.png?raw=true" alt="preview" width="500" align="middle">
+
 ## 🍮 Fonctionnalités
+
 - ``/menu``: Affiche le menu du midi du Resto'U de Médreville
 - Peut (si configuré) envoyer automatiquement tous les jours à X heures et Y minutes le menu dans un channel
+
+---
 
 ## 🤖 Obtenir un bot discord
 
@@ -23,6 +30,8 @@
 5. Dans "BOT PERMISSIONS", il y aura juste besoin de séletionner "Send Messages"
 6. Copier / Coller la "GENERATED URL" sur un browser
 7. Inviter le bot sur le serveur voulu
+
+---
 
 ## 💻 Déploiement
 
