@@ -5,7 +5,7 @@
 
 ## 📋 Preview
 
-<img src="https://github.com/NicoRiri/RuMedrevilleBot/blob/main/assets/preview.png?raw=true" alt="preview" width="500" align="middle">
+<img src="https://github.com/NicoRiri/RuMedrevilleBot/blob/main/assets/preview.png?raw=true" alt="preview" width="500">
 
 ## 🍮 Fonctionnalités
 
